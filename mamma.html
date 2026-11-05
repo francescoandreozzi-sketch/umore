@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Come sta</title><meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Nunito:wght@400;700&display=swap">
+<link rel="stylesheet" href="style.css"></head>
+<body><main>
+<h1>Come sta</h1>
+<p class="sub">Le emozioni che ha scritto per te.</p>
+
+<section id="app">
+  <div class="card big" id="now"></div>
+  <button class="btn" id="refresh" style="margin:0 0 16px">Aggiorna</button>
+  <div class="card"><h2 style="margin-top:0;font:600 1.3rem Fraunces,serif">Le ultime volte</h2><div id="list"></div></div>
+</section>
+</main>
+<script src="common.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+function show(l){
+  $("now").innerHTML=l.length?`<div class="e">${emoji(l[0].mood)}</div><h2 style="font:600 1.6rem Fraunces,serif;margin:8px 0 0">${esc(l[0].mood)}</h2><small style="color:var(--soft)">${when(l[0].date)}</small>${l[0].note?`<p>${esc(l[0].note)}</p>`:""}`:"<p>Non ha ancora scritto niente.</p>";
+  renderList($("list"),l.slice(1));
+}
+async function load(){try{show(await api({}))}catch(e){$("now").textContent="Non riesco a caricare."}}
+$("refresh").onclick=load;
+load();
+</script></body></html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Come mi sento</title><meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Nunito:wght@400;700&display=swap">
+<link rel="stylesheet" href="style.css"></head>
+<body><main>
+<h1>Come mi sento</h1>
+<p class="sub">Qui scrivi le tue emozioni. Tua madre le vedrà.</p>
+
+<section id="app">
+  <div class="card">
+    <div class="moods" id="moods"></div>
+    <label for="note">Vuoi dire qualcosa in più?</label>
+    <textarea id="note" maxlength="1000"></textarea>
+    <p class="err" id="err2" role="alert"></p>
+    <button class="btn" id="save" disabled>Pubblica</button>
+  </div>
+  <div class="card"><h2 style="margin-top:0;font:600 1.3rem Fraunces,serif">Le mie emozioni</h2><div id="list"></div></div>
+</section>
+</main>
+<script src="common.js"></script>
+<script>
+let mood="";
+const $=id=>document.getElementById(id);
+$("moods").innerHTML=MOODS.map(([e,n])=>`<button class="mood" aria-pressed="false" data-m="${n}"><span>${e}</span>${n}</button>`).join("");
+$("moods").onclick=ev=>{const b=ev.target.closest(".mood");if(!b)return;mood=b.dataset.m;
+  document.querySelectorAll(".mood").forEach(x=>x.setAttribute("aria-pressed",x===b));$("save").disabled=false};
+$("save").onclick=async()=>{
+  $("save").disabled=true;$("err2").textContent="";
+  try{const l=await api({action:"add",mood,note:$("note").value});
+    renderList($("list"),l);$("note").value="";mood="";
+    document.querySelectorAll(".mood").forEach(x=>x.setAttribute("aria-pressed","false"));
+    $("err2").textContent="Pubblicato. Ora tua madre lo può vedere."}
+  catch(e){$("err2").textContent=e.message;$("save").disabled=false}
+};
+api({}).then(l=>renderList($("list"),l)).catch(()=>{$("list").textContent="Non riesco a caricare."});
+</script></body></html>
